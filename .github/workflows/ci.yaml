@@ -10,6 +10,10 @@ on:
       - main
       - develop
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   test:
     name: Run Tests
@@ -49,7 +53,7 @@ jobs:
         run: |
           docker build \
             -t shopflix-product-service:${{ github.sha }} \
-             .
+            .
 
   security:
     name: Trivy Security Scan
@@ -75,3 +79,30 @@ jobs:
           exit-code: 1
           ignore-unfixed: true
           severity: CRITICAL,HIGH
+
+  publish:
+    name: Publish Docker Image
+    runs-on: ubuntu-latest
+    needs: security
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker Image
+        working-directory: services/product-service
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/shopflix-product-service:${{ github.sha }} \
+            .
+
+      - name: Push Docker Image
+        run: |
+          docker push \
+            ${{ secrets.DOCKERHUB_USERNAME }}/shopflix-product-service:${{ github.sha }}
