@@ -3,8 +3,7 @@ name: ShopFlix CI
 on:
   push:
     branches:
-      - main
-      - develop
+      - "**"
 
   pull_request:
     branches:
@@ -33,4 +32,5 @@ jobs:
           pip install pytest
 
       - name: Run tests
+        working-directory: services/product-service
         run: pytest -v
