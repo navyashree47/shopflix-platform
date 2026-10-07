@@ -2,18 +2,56 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: product-service
+  labels:
+    app: product-service
+    component: backend
+    managed-by: kubernetes
+
 spec:
   replicas: 1
+
   selector:
     matchLabels:
       app: product-service
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+
   template:
     metadata:
       labels:
         app: product-service
+        component: backend
+
     spec:
       containers:
         - name: product-service
-          image: navyashree47/shopflix-product-service:e128c5486fd12149849300a71830907ad7b2ec1e
+          image: image: navyashree47/shopflix-product-service:edabc3e3e7168b21853ce022a749d72da8cd6732
+
           ports:
             - containerPort: 8000
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
