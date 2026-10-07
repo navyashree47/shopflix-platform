@@ -1,0 +1,7 @@
+services:
+  product-service:
+    image: navyashree47/shopflix-product-service:${IMAGE_TAG}
+    container_name: shopflix-product-service
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
