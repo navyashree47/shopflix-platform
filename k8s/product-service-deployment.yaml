@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
         - name: product-service
-          image: image: navyashree47/shopflix-product-service:edabc3e3e7168b21853ce022a749d72da8cd6732
+          image: navyashree47/shopflix-product-service:edabc3e3e7168b21853ce022a749d72da8cd6732
 
           ports:
             - containerPort: 8000
